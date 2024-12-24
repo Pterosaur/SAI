@@ -1417,6 +1417,20 @@ typedef enum _sai_tam_report_attr_t
     SAI_TAM_REPORT_ATTR_REPORT_INTERVAL_UNIT,
 
     /**
+     * @brief Base ID for IPFIX templates
+     * 
+     * The templates bound to this report object will be assigned IDs starting from this value.
+     * According to the IPFIX specification, the value should be in the range 256-65535.
+     * If this value is 256, the first template will have ID 256, the second 257, and so on.
+     *
+     * @type sai_uint16_t
+     * @flags CREATE_AND_SET
+     * @default 256
+     * @validonly SAI_TAM_REPORT_ATTR_TYPE == SAI_TAM_REPORT_TYPE_IPFIX
+     */
+    SAI_TAM_REPORT_ATTR_IPFIX_TEMPLATES_BASE_ID,
+
+    /**
      * @brief End of Attributes
      */
     SAI_TAM_REPORT_ATTR_END,

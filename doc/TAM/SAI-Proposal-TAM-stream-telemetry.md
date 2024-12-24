@@ -379,6 +379,7 @@ erDiagram
         SAI_TAM_REPORT_ATTR_REPORT_INTERVAL poll_interval "STREAM_TELEMETRY_PROFILE:profile_name[poll_interval] on Config DB"
         SAI_TAM_REPORT_ATTR_TEMPLATE_REPORT_INTERVAL _0 "Don't push the template, Because we hope the template can be proactively queried by orchagent"
         SAI_TAM_REPORT_ATTR_REPORT_INTERVAL_UNIT SAI_TAM_REPORT_INTERVAL_UNIT_MSEC
+        SAI_TAM_REPORT_ATTR_IPFIX_TEMPLATES_BASE_ID the_max_available_template_ID "The value should be maintained by the NOS to ensure that template ID is unique"
     }
     telemetry_type[TAM_telemetry_type] {
         SAI_ID SAI_VALUE "Comments"
@@ -624,6 +625,36 @@ create_tam_telemetry(&sai_tam_telemetry_obj, switch_id, attr_count, sai_attr_lis
 
 ``` c++
 
+/**
+ * @brief Attributes for TAM report
+ */
+typedef enum _sai_tam_report_attr_t
+{
+
+// ...
+
+    /**
+     * @brief Base ID for IPFIX templates
+     * 
+     * The templates bound to this report object will be assigned IDs starting from this value.
+     * According to the IPFIX specification, the value should be in the range 256-65535.
+     * If this value is 256, the first template will have ID 256, the second 257, and so on.
+     *
+     * @type sai_uint16_t
+     * @flags CREATE_AND_SET
+     * @default 256
+     * @validonly SAI_TAM_REPORT_ATTR_TYPE == SAI_TAM_REPORT_TYPE_IPFIX
+     */
+    SAI_TAM_REPORT_ATTR_IPFIX_TEMPLATES_BASE_ID,
+
+// ...
+
+} sai_tam_report_attr_t;
+
+```
+
+``` c++
+
 sai_attr_list[0].id = SAI_TAM_REPORT_ATTR_TYPE;
 sai_attr_list[0].value.s32 = SAI_TAM_REPORT_TYPE_IPFIX;
 
@@ -641,7 +672,10 @@ sai_attr_list[3].value.s32 = 0; // Don't push the template, Because we hope the 
 sai_attr_list[4].id = SAI_TAM_REPORT_ATTR_REPORT_INTERVAL_UNIT;
 sai_attr_list[4].value.s32 = SAI_TAM_REPORT_INTERVAL_UNIT_USEC;
 
-attr_count = 5;
+sai_attr_list[5].id = SAI_TAM_REPORT_ATTR_IPFIX_TEMPLATES_BASE_ID;
+sai_attr_list[5].id = the_max_available_template_ID; // The value should be maintained by the NOS to ensure that template ID is unique
+
+attr_count = 6;
 create_tam_report(&sai_tam_report_obj, switch_id, attr_count, sai_attr_list);
 
 sai_attr_list[0].id = SAI_TAM_TELEMETRY_ATTR_TAM_TYPE_LIST;
